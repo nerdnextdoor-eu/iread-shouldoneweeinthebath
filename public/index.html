@@ -95,7 +95,8 @@
     color: var(--ink-soft);
     margin: 16px 0 0;
   }
-  .countries { margin-top: 6px; max-width: 22rem; line-height: 1.5; }
+  .countries { margin-top: 20px; line-height: 1.7; }
+  .countries p { margin: 0; }
 </style>
 </head>
 <body>
@@ -143,7 +144,7 @@
   <section class="counter-section" id="counter" hidden aria-label="Reader count">
     <p class="count" id="count"></p>
     <p class="caption">readers who like to wee in the bath</p>
-    <p class="caption countries" id="countries" hidden></p>
+    <div class="caption countries" id="countries" hidden></div>
   </section>
 </main>
 
@@ -155,34 +156,47 @@
     var source = new URLSearchParams(location.search).get("s") === "qr" ? "qr" : "direct";
     var api = "/api/count?s=" + source;
 
+    // Short names where they read better; otherwise the phone's own English name.
+    var SHORT = { GB: "the UK", US: "the US", AE: "the UAE" };
     // Countries whose English name takes "the" ("from the Netherlands").
-    var THE = ["NL", "GB", "US", "PH", "BS", "GM", "AE", "DO", "CF", "CZ", "MV", "KY", "VG", "VI",
+    var THE = ["NL", "PH", "BS", "GM", "DO", "CF", "CZ", "MV", "KY", "VG", "VI",
                "CK", "FK", "FO", "MH", "SB", "TC", "KM", "SC", "VA", "CD", "CG", "SY"];
-    var MAX_NAMED = 8;
+    var MAX_LINES = 8; // after this, the rest are added up as "elsewhere"
+    var fmt = new Intl.NumberFormat("en-GB");
 
-    function countryLine(countries) {
-      if (!window.Intl || !Intl.DisplayNames || !Intl.ListFormat) return "";
-      var names = new Intl.DisplayNames(["en-GB"], { type: "region" });
-      var codes = Object.keys(countries || {})
-        .filter(function (c) { return c !== "XX"; })
-        .sort(function (a, b) { return countries[b] - countries[a]; }); // most readers first
-      if (!codes.length) return "";
-      var shown = codes.slice(0, MAX_NAMED).map(function (c) {
-        var n = names.of(c) || c;
-        return THE.indexOf(c) >= 0 ? "the " + n : n;
+    function countryName(code, names) {
+      if (SHORT[code]) return SHORT[code];
+      var n = (names && names.of(code)) || code;
+      return THE.indexOf(code) >= 0 ? "the " + n : n;
+    }
+
+    // One line per country, most readers first: "4 from the UK".
+    function countryLines(countries) {
+      var names = window.Intl && Intl.DisplayNames ? new Intl.DisplayNames(["en-GB"], { type: "region" }) : null;
+      var known = Object.keys(countries || {}).filter(function (c) { return c !== "XX"; });
+      known.sort(function (a, b) {
+        return countries[b] - countries[a] || countryName(a, names).localeCompare(countryName(b, names));
       });
-      var rest = codes.length - shown.length;
-      if (rest > 0) shown.push(rest === 1 ? "1 other country" : rest + " other countries");
-      return "from " + new Intl.ListFormat("en-GB", { type: "conjunction" }).format(shown);
+      var lines = known.slice(0, MAX_LINES).map(function (c) {
+        return fmt.format(countries[c]) + " from " + countryName(c, names);
+      });
+      var elsewhere = (countries && countries.XX) || 0; // country unknown
+      known.slice(MAX_LINES).forEach(function (c) { elsewhere += countries[c]; });
+      if (elsewhere > 0) lines.push(fmt.format(elsewhere) + " from elsewhere");
+      return lines;
     }
 
     function show(data) {
       if (typeof data.readers !== "number") return;
-      document.getElementById("count").textContent = new Intl.NumberFormat("en-GB").format(data.readers);
-      var line = countryLine(data.countries);
+      document.getElementById("count").textContent = fmt.format(data.readers);
       var el = document.getElementById("countries");
-      el.textContent = line;
-      el.hidden = !line;
+      el.textContent = "";
+      countryLines(data.countries).forEach(function (text) {
+        var p = document.createElement("p");
+        p.textContent = text;
+        el.appendChild(p);
+      });
+      el.hidden = !el.childNodes.length;
       document.getElementById("counter").hidden = false;
     }
 

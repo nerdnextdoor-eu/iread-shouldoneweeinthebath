@@ -28,7 +28,7 @@ The page the QR code at the back of *Should One Wee In The Bath?* (by Caroline) 
 
 ## How the counter works
 
-**The number on the page = page loads from the book's QR code** (the QR URL carries `?s=qr`). Under it, the readers' countries, most readers first (up to eight named, then "and N other countries"). Country names come from the phone's own language data.
+**The number on the page = page loads from the book's QR code** (the QR URL carries `?s=qr`). Under it, one line per country, most readers first ("4 from the UK"). Up to eight countries get their own line; the rest, plus readers whose country is unknown, are added up as "N from elsewhere". Country names come from the phone's own language data, with short forms for the UK, the US and the UAE (the `SHORT` list in `index.html`).
 
 1. When the page loads, its script sends one request to `/api/count?s=qr` (or `?s=direct` without the QR marker).
 2. The function records it and returns the QR reader count and countries:

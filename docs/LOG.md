@@ -19,5 +19,6 @@ For the project report and the pro-bono invoice. Fill in the time column as you 
 | 2026-10-24 | Found: count rose with no one visiting (3 NL = Clare's refreshes, 6 US = likely automated browsers) | Counter counted every page load, including bots | |
 | 2026-10-24 | Show only QR loads (`?s=qr`); skip self-declared bots; keep a separate "humans" tally (visitor scrolled) | Bots don't know the QR URL; scrolling is a strong human signal | |
 | 2026-10-24 | Show country names under the caption (most readers first) | Caroline's "worldwide count"; brought forward from iteration 2 | |
+| 2026-10-24 | Country display changed to one line per country with counts ("4 from the UK"), max 8 lines + "elsewhere" | Clare's request | |
 | 2026-10-24 | Reset endpoint protected by a `RESET_TOKEN` environment variable | Zero the count before the book goes to print | |
 | 2026-10-24 | New storage key `counts-v2`; the old test counts are left behind | Clean start; old data was all test visits | |
