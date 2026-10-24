@@ -95,6 +95,7 @@
     color: var(--ink-soft);
     margin: 16px 0 0;
   }
+  .countries { margin-top: 6px; max-width: 22rem; line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -142,23 +143,64 @@
   <section class="counter-section" id="counter" hidden aria-label="Reader count">
     <p class="count" id="count"></p>
     <p class="caption">readers who like to wee in the bath</p>
+    <p class="caption countries" id="countries" hidden></p>
   </section>
 </main>
 
 <script>
-  // Records this visit and shows the total. Scans from the book's QR code
-  // carry ?s=qr in the URL, so QR scans and typed visits are counted apart.
+  // The number shown is how many times the page was opened from the book's
+  // QR code (the QR URL carries ?s=qr). Typed visits are recorded separately
+  // and not shown. Nothing is stored on the reader's phone.
   (function () {
     var source = new URLSearchParams(location.search).get("s") === "qr" ? "qr" : "direct";
-    fetch("/api/count?s=" + source, { method: "POST" })
+    var api = "/api/count?s=" + source;
+
+    // Countries whose English name takes "the" ("from the Netherlands").
+    var THE = ["NL", "GB", "US", "PH", "BS", "GM", "AE", "DO", "CF", "CZ", "MV", "KY", "VG", "VI",
+               "CK", "FK", "FO", "MH", "SB", "TC", "KM", "SC", "VA", "CD", "CG", "SY"];
+    var MAX_NAMED = 8;
+
+    function countryLine(countries) {
+      if (!window.Intl || !Intl.DisplayNames || !Intl.ListFormat) return "";
+      var names = new Intl.DisplayNames(["en-GB"], { type: "region" });
+      var codes = Object.keys(countries || {})
+        .filter(function (c) { return c !== "XX"; })
+        .sort(function (a, b) { return countries[b] - countries[a]; }); // most readers first
+      if (!codes.length) return "";
+      var shown = codes.slice(0, MAX_NAMED).map(function (c) {
+        var n = names.of(c) || c;
+        return THE.indexOf(c) >= 0 ? "the " + n : n;
+      });
+      var rest = codes.length - shown.length;
+      if (rest > 0) shown.push(rest === 1 ? "1 other country" : rest + " other countries");
+      return "from " + new Intl.ListFormat("en-GB", { type: "conjunction" }).format(shown);
+    }
+
+    function show(data) {
+      if (typeof data.readers !== "number") return;
+      document.getElementById("count").textContent = new Intl.NumberFormat("en-GB").format(data.readers);
+      var line = countryLine(data.countries);
+      var el = document.getElementById("countries");
+      el.textContent = line;
+      el.hidden = !line;
+      document.getElementById("counter").hidden = false;
+    }
+
+    fetch(api, { method: "POST" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (data) {
-        if (typeof data.total !== "number") return;
-        document.getElementById("count").textContent =
-          new Intl.NumberFormat("en-GB").format(data.total);
-        document.getElementById("counter").hidden = false;
-      })
+      .then(show)
       .catch(function () { /* counter stays hidden; the poem is unaffected */ });
+
+    // Human tally (not shown): counted once, when the reader actually scrolls.
+    // Automated browsers rarely scroll.
+    var sent = false;
+    function onScroll() {
+      if (sent || window.scrollY < 100) return;
+      sent = true;
+      window.removeEventListener("scroll", onScroll);
+      fetch(api + "&e=human", { method: "POST", keepalive: true }).catch(function () {});
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
   })();
 </script>
 </body>

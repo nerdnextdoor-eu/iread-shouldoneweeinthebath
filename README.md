@@ -28,19 +28,47 @@ The page the QR code at the back of *Should One Wee In The Bath?* (by Caroline) 
 
 ## How the counter works
 
-1. When the page loads, its script sends one request to `/api/count`.
-2. The function adds 1 to the total, to the reader's country, and to the source (`qr` if the URL has `?s=qr`, otherwise `direct`), then returns the total.
-3. The page shows the total. If anything fails, the counter section stays hidden and the poem is unaffected.
+**The number on the page = page loads from the book's QR code** (the QR URL carries `?s=qr`). Under it, the readers' countries, most readers first (up to eight named, then "and N other countries"). Country names come from the phone's own language data.
 
-**Privacy:** only totals are stored: overall, per two-letter country code, and per source. The country comes from Netlify's own geolocation. No IP addresses, cookies, browser storage or third-party services. The fonts are served from this site, so readers' phones never contact Google.
+1. When the page loads, its script sends one request to `/api/count?s=qr` (or `?s=direct` without the QR marker).
+2. The function records it and returns the QR reader count and countries:
+   - **QR load:** +1 reader, +1 for their country.
+   - **Typed visit (no `?s=qr`):** recorded as `direct`, not shown on the page.
+   - **Self-declared bot** (crawlers, link previews, "headless" automated browsers): not counted, only tallied as `botsSkipped`.
+3. **Human tally (not shown):** when a visitor scrolls, the page sends one more request (`&e=human`). Automated browsers rarely scroll, so `humans` is a good estimate of real people, separate from loads.
+4. If anything fails, the counter section stays hidden and the poem is unaffected.
+
+**Privacy:** only totals are stored. The country comes from Netlify's own geolocation. No IP addresses, cookies, browser storage or third-party services. The fonts are served from this site, so readers' phones never contact Google.
 
 **Ad blockers:** the counter is on the page's own address, not a third-party analytics service, so ad blockers have no reason to block it.
 
-**See the counts:** open https://iread.shouldoneweeinthebath.stream/api/count in a browser. It shows the totals without adding a visit. `XX` means the country was unknown.
+**See all the counts:** open https://iread.shouldoneweeinthebath.stream/api/count in a browser. It shows everything without adding a visit:
+
+```json
+{ "since": "...", "qr": { "loads": 12, "countries": { "GB": 8, "NL": 4 } },
+  "direct": { "loads": 30 }, "humans": { "qr": 10, "direct": 5 }, "botsSkipped": 6 }
+```
+
+`XX` means the country was unknown. Compare `qr.loads` with `humans.qr` to see roughly how many QR loads were people.
+
+### Resetting the count (before the book goes to print)
+
+One-time setup:
+1. In Netlify: the site → **Site configuration → Environment variables** → add `RESET_TOKEN` with a long random value. Store it in your password manager.
+2. Redeploy (Deploys → Trigger deploy). Netlify applies environment variables at deploy time.
+
+To reset, run this on your computer (replace the token):
+
+```bash
+curl -X POST -H "x-reset-token: YOUR_TOKEN" "https://iread.shouldoneweeinthebath.stream/api/count?e=reset"
+```
+
+It returns the fresh, zeroed counts. Without the right token it answers `forbidden`. If `RESET_TOKEN` isn't set, resetting is switched off.
 
 **Known limits (fine for now):**
-- Every page load counts, including reloads.
+- Reloads count again.
 - Readers with JavaScript switched off aren't counted.
+- Bots that pretend to be normal phones are counted if they use the QR URL. The `humans` tally shows how far off that is.
 - Anyone who finds `/api/count` could add fake visits. If that ever happens, add rate limiting.
 
 ## Deploying

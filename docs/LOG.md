@@ -15,3 +15,9 @@ For the project report and the pro-bono invoice. Fill in the time column as you 
 | 2026-10-24 | Fonts self-hosted instead of loaded from Google Fonts | Readers' phones never contact Google; same fonts | |
 | 2026-10-24 | Subdomain `iread.shouldoneweeinthebath.stream`, DNS only at Cloudflare | Caroline owns the domain; proxy would break the country count | |
 | 2026-10-24 | Iteration 1 scaffold built and tested (4 counter tests; screenshot at 390px) | | |
+| 2026-10-24 | First deploy live at iread.shouldoneweeinthebath.stream | | |
+| 2026-10-24 | Found: count rose with no one visiting (3 NL = Clare's refreshes, 6 US = likely automated browsers) | Counter counted every page load, including bots | |
+| 2026-10-24 | Show only QR loads (`?s=qr`); skip self-declared bots; keep a separate "humans" tally (visitor scrolled) | Bots don't know the QR URL; scrolling is a strong human signal | |
+| 2026-10-24 | Show country names under the caption (most readers first) | Caroline's "worldwide count"; brought forward from iteration 2 | |
+| 2026-10-24 | Reset endpoint protected by a `RESET_TOKEN` environment variable | Zero the count before the book goes to print | |
+| 2026-10-24 | New storage key `counts-v2`; the old test counts are left behind | Clean start; old data was all test visits | |
