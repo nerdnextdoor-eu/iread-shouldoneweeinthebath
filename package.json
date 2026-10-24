@@ -1,0 +1,12 @@
+{
+  "name": "iread-shouldoneweeinthebath",
+  "private": true,
+  "type": "module",
+  "description": "Bonus poem and reader counter for the book Should One Wee In The Bath?",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.6"
+  }
+}

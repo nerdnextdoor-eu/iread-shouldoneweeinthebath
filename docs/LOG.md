@@ -1,0 +1,17 @@
+# Decisions and time log
+
+For the project report and the pro-bono invoice. Fill in the time column as you go.
+
+| Date | Decision or step | Why | Time (h) |
+|---|---|---|---|
+| 2026-10-08 to 10-23 | Research and design (hosting, counter, guestbook options) | See the design doc in NND Projects: `claude/book-qr-guestbook-design.md` | |
+| 2026-10-23 | Three iterations, each tested with Caroline: 1 poem + counter, 2 country display, 3 guestbook | Keep each step small and showable | |
+| 2026-10-23 | Host on Netlify (legacy free plan) | Keeps everything in one place; counter on the same address so ad blockers leave it alone | |
+| 2026-10-23 | Own counter (Netlify Function + Blobs), not GoatCounter | GoatCounter is likely blocked by ad blockers | |
+| 2026-10-24 | Record country from iteration 1, display it in iteration 2 | Data starts accumulating from the first scan | |
+| 2026-10-24 | Count every page load; nothing stored on readers' devices | Simplest; avoids the cookie-consent question | |
+| 2026-10-24 | QR URL carries `?s=qr` | Tells QR scans apart from typed visits | |
+| 2026-10-24 | Poem text only, original spelling, "you" underlined | Caroline's choice; the photo can come in a later iteration | |
+| 2026-10-24 | Fonts self-hosted instead of loaded from Google Fonts | Readers' phones never contact Google; same fonts | |
+| 2026-10-24 | Subdomain `iread.shouldoneweeinthebath.stream`, DNS only at Cloudflare | Caroline owns the domain; proxy would break the country count | |
+| 2026-10-24 | Iteration 1 scaffold built and tested (4 counter tests; screenshot at 390px) | | |

@@ -1,0 +1,9 @@
+# No build step: Netlify publishes the "public" folder as-is
+# and deploys the function in netlify/functions automatically.
+[build]
+  publish = "public"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

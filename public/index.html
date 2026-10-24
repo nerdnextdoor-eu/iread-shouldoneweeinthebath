@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Should One Wee In The Bath? · Bonus poem</title>
+<meta name="description" content="A bonus poem for readers of Should One Wee In The Bath?">
+<style>
+  /* ---- Edit the look here ---- */
+  :root {
+    --paper: #EFE9DB;          /* background */
+    --ink: #2B2825;            /* main text */
+    --ink-soft: #5E574E;       /* small text */
+    --font-type: "Special Elite", "Courier New", Courier, monospace;
+    --font-hand: "Architects Daughter", "Comic Sans MS", cursive;
+    --size-intro: 15px;
+    --size-title: 22px;
+    --size-poem: 17px;
+    --size-count: 104px;
+    --size-caption: 15px;
+    --indent: 1.25em;          /* one indent step in the poem */
+    --page-width: 30rem;
+  }
+
+  /* Fonts are stored on this site, so readers' phones never contact Google. */
+  @font-face {
+    font-family: "Special Elite";
+    src: url("/fonts/special-elite-latin-400-normal.woff2") format("woff2");
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "Architects Daughter";
+    src: url("/fonts/architects-daughter-latin-400-normal.woff2") format("woff2");
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-hand);
+    -webkit-text-size-adjust: 100%;
+  }
+  main { max-width: var(--page-width); margin: 0 auto; padding: 0 24px; }
+
+  /* ---- Poem ---- */
+  .poem-section { padding: 40px 0 64px; }
+  .intro {
+    font-family: var(--font-type);
+    font-size: var(--size-intro);
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+  }
+  .poem-title {
+    font-family: var(--font-hand);
+    font-size: var(--size-title);
+    font-weight: 400;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    margin: 0 0 20px;
+  }
+  .poem { font-size: var(--size-poem); line-height: 1.5; }
+  .stanza { margin: 0 0 1.5em; }
+  .stanza:last-child { margin-bottom: 0; }
+  /* Each line; wrapped long lines hang under the first word. */
+  .l { display: block; padding-left: 1em; text-indent: -1em; }
+  .i1 { padding-left: calc(1em + var(--indent)); }
+  .i2 { padding-left: calc(1em + 2 * var(--indent)); }
+  .i3 { padding-left: calc(1em + 3 * var(--indent)); }
+
+  /* ---- Counter ---- */
+  .counter-section {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 48px 0;
+  }
+  .counter-section[hidden] { display: none; }
+  .count {
+    font-family: var(--font-type);
+    font-size: var(--size-count);
+    line-height: 1;
+    margin: 0;
+    color: var(--ink);
+    /* faint doubled shadow, like fresh ink */
+    text-shadow: 1px 1px 0 rgba(43, 40, 37, 0.18), -1px 0 0 rgba(43, 40, 37, 0.12);
+  }
+  .caption {
+    font-family: var(--font-type);
+    font-size: var(--size-caption);
+    color: var(--ink-soft);
+    margin: 16px 0 0;
+  }
+</style>
+</head>
+<body>
+<main>
+  <section class="poem-section" aria-labelledby="poem-title">
+    <p class="intro">Here's your bonus poem</p>
+    <h1 class="poem-title" id="poem-title">The Attack of Saliva!</h1>
+
+    <div class="poem">
+      <p class="stanza">
+        <span class="l">Waking up</span>
+        <span class="l">Hands quick to the face</span>
+        <span class="l">To hide the embarassment</span>
+        <span class="l">Of my disgrace;</span>
+        <span class="l">In the etiquette of sleep</span>
+        <span class="l">I've not been schooled</span>
+        <span class="l">So forgive me Father</span>
+        <span class="l">For I have drooled.</span>
+      </p>
+      <p class="stanza">
+        <span class="l">Days</span>
+        <span class="l i1">I conduct myself with the grace of a willow</span>
+        <span class="l">Nights</span>
+        <span class="l i1">Involuntarily I'll assault your pillow.</span>
+      </p>
+      <p class="stanza">
+        <span class="l i2">Is there anything cooler</span>
+        <span class="l i2">Than being a drooler?</span>
+      </p>
+      <p class="stanza">
+        <span class="l i2">Waking up with moist round my lips...</span>
+        <span class="l i2">Feel the force of my sensual drips...</span>
+      </p>
+      <p class="stanza">
+        <span class="l i1">On the sheets I shall scribble</span>
+        <span class="l i1">Fine art with my dribble</span>
+        <span class="l i3">But</span>
+        <span class="l i2">Will <u>you</u> be a survivor</span>
+        <span class="l i2">of The Attack of Saliva?!?</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- Hidden until the count loads, so a broken counter never shows. -->
+  <section class="counter-section" id="counter" hidden aria-label="Reader count">
+    <p class="count" id="count"></p>
+    <p class="caption">readers who like to wee in the bath</p>
+  </section>
+</main>
+
+<script>
+  // Records this visit and shows the total. Scans from the book's QR code
+  // carry ?s=qr in the URL, so QR scans and typed visits are counted apart.
+  (function () {
+    var source = new URLSearchParams(location.search).get("s") === "qr" ? "qr" : "direct";
+    fetch("/api/count?s=" + source, { method: "POST" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (data) {
+        if (typeof data.total !== "number") return;
+        document.getElementById("count").textContent =
+          new Intl.NumberFormat("en-GB").format(data.total);
+        document.getElementById("counter").hidden = false;
+      })
+      .catch(function () { /* counter stays hidden; the poem is unaffected */ });
+  })();
+</script>
+</body>
+</html>
